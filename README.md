@@ -58,3 +58,16 @@ cargo build -r
 "Everyone has been made for some particular work, and the desire for that work has been put in every heart."
 "The less of the World, the freer you live."
 ```
+
+## Step 4
+For step 4 add clap as a dependency:
+```bash
+cargo add clap --features derive
+```
+
+```bash
+cargo build -r && head -n3 test.txt | ./target/release/rscat -n
+1 "Your heart is the size of an ocean. Go find yourself in its hidden depths."
+2 "The Bay of Bengal is hit frequently by cyclones. The months of November and May, in particular, are dangerous in this regard."
+3 "Thinking is the capital, Enterprise is the way, Hard Work is the solution."
+```
