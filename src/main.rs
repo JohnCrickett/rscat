@@ -5,20 +5,22 @@ use std::fs::File;
 
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
-    let file = &args[1];
+    let files = &args[1..];
 
-    if file == "-" {
+    if files.len() == 0 || files[0] == "-" {
         let stdin = io::stdin();
         for line in stdin.lock().lines() {
             println!("{}", line?);
         }
     } else {
-        let f = File::open(file).expect("unable to open file");
-        let f = BufReader::new(f);
+        for file in files {
+            let f = File::open(file).expect("unable to open file");
+            let f = BufReader::new(f);
 
-        for line in f.lines() {
-            let line = line?;
-            println!("{line}");
+            for line in f.lines() {
+                let line = line?;
+                println!("{line}");
+            }
         }
     }
 
