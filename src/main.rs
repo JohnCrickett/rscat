@@ -21,7 +21,7 @@ struct Arguments {
 fn cat(n: bool, b : bool, line_number: i32, line : String) -> i32 {
     if !n && !b {
         println!("{}", line);
-        return line_number;
+        line_number
     } else {
         if b && line.len() == 0 {
             println!();
@@ -39,7 +39,10 @@ fn main() -> io::Result<()> {
     if args.files.len() == 0 || args.files[0] == "-" {
         let stdin = io::stdin();
         for line in stdin.lock().lines() {
-            let line = line?;
+            let line = match line {
+                Ok(line) => line,
+                Err(error) => panic!("Problem reading the input: {error:?}"),
+            };
             line_number = cat(args.n, args.b, line_number, line);
         }
     } else {
@@ -48,11 +51,13 @@ fn main() -> io::Result<()> {
             let f = BufReader::new(f);
 
             for line in f.lines() {
-                let line = line?;
+                let line = match line {
+                    Ok(line) => line,
+                    Err(error) => panic!("Problem reading the input: {error:?}"),
+                };
                 line_number = cat(args.n, args.b, line_number, line);
             }
         }
     }
-
     Ok(())
 }
