@@ -1,4 +1,3 @@
-use std::env;
 use std::io::{self, BufReader};
 use std::io::prelude::*;
 use std::fs::File;
@@ -9,9 +8,28 @@ use clap::Parser;
 #[command(author = "John Crickett", version, about="rscat, a simple cat clone in Rust")]
 struct Arguments {
     /// Number the output lines, starting at 1.
-    #[arg(short, long, action = clap::ArgAction::SetFalse)]
-    n: Option<bool>,
+    #[arg(short, action = clap::ArgAction::SetTrue)]
+    n: bool,
+
+    /// Number the non-blank output lines, starting at 1
+    #[arg(short, action = clap::ArgAction::SetTrue)]
+    b: bool,
+
     files: Vec<String>,
+}
+
+fn cat(n: bool, b : bool, line_number: i32, line : String) -> i32 {
+    if !n && !b {
+        println!("{}", line);
+        return line_number;
+    } else {
+        if b && line.len() == 0 {
+            println!();
+            return line_number;
+        }
+        println!("{} {}", line_number, line);
+        line_number + 1
+    }
 }
 
 fn main() -> io::Result<()> {
@@ -21,12 +39,8 @@ fn main() -> io::Result<()> {
     if args.files.len() == 0 || args.files[0] == "-" {
         let stdin = io::stdin();
         for line in stdin.lock().lines() {
-            if args.n.unwrap_or(false) {
-                println!("{}", line?);
-            } else {
-                println!("{} {}", line_number, line?);
-                line_number += 1;
-            }
+            let line = line?;
+            line_number = cat(args.n, args.b, line_number, line);
         }
     } else {
         for file in args.files {
@@ -35,12 +49,7 @@ fn main() -> io::Result<()> {
 
             for line in f.lines() {
                 let line = line?;
-                if args.n.unwrap_or(false) {
-                    println!("{}", line);
-                } else {
-                    println!("{} {}", line_number, line);
-                    line_number += 1;
-                }
+                line_number = cat(args.n, args.b, line_number, line);
             }
         }
     }
