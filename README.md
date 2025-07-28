@@ -30,5 +30,5 @@ cargo build -r
 ```bash
 cargo build -r
 head -n1 test.txt | ./target/release/rscat - 
-
+"Your heart is the size of an ocean. Go find yourself in its hidden depths."
 ```

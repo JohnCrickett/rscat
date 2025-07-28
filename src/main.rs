@@ -7,12 +7,19 @@ fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let file = &args[1];
 
-    let f = File::open(file).expect("unable to open file");
-    let f = BufReader::new(f);
+    if file == "-" {
+        let stdin = io::stdin();
+        for line in stdin.lock().lines() {
+            println!("{}", line?);
+        }
+    } else {
+        let f = File::open(file).expect("unable to open file");
+        let f = BufReader::new(f);
 
-    for line in f.lines() {
-        let line = line?;
-        println!("{line}");
+        for line in f.lines() {
+            let line = line?;
+            println!("{line}");
+        }
     }
 
     Ok(())
